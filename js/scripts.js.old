@@ -1,0 +1,85 @@
+// 最小化的JavaScript文件 - 移除了所有导航栏相关代码
+
+// DOM 元素选择
+const faqItems = document.querySelectorAll('.faq__item');
+const backToTopBtn = document.querySelector('.back-to-top');
+
+// 显示/隐藏回到顶部按钮
+function toggleBackToTopButton() {
+  if (backToTopBtn) {
+    if (window.scrollY > 500) {
+      backToTopBtn.classList.add('show');
+    } else {
+      backToTopBtn.classList.remove('show');
+    }
+  }
+}
+
+// 回到顶部功能
+function scrollToTop() {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+}
+
+// FAQ 手风琴效果
+function toggleFaqItem() {
+  this.classList.toggle('active');
+  const answer = this.querySelector('.faq__answer');
+  
+  if (this.classList.contains('active')) {
+    answer.style.maxHeight = answer.scrollHeight + 'px';
+    answer.style.paddingTop = '1rem';
+  } else {
+    answer.style.maxHeight = '0';
+    answer.style.paddingTop = '0';
+  }
+}
+
+// 平滑滚动
+function setupSmoothScroll() {
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      const targetId = this.getAttribute('href');
+      if (targetId === '#') return;
+      
+      const targetElement = document.querySelector(targetId);
+      if (targetElement) {
+        window.scrollTo({
+          top: targetElement.offsetTop - 80,
+          behavior: 'smooth'
+        });
+      }
+    });
+  });
+}
+
+// 初始化函数
+function init() {
+  toggleBackToTopButton();
+  setupSmoothScroll();
+  
+  // FAQ 事件监听
+  faqItems.forEach(item => {
+    const question = item.querySelector('.faq__question');
+    if (question) question.addEventListener('click', () => toggleFaqItem.call(item));
+  });
+  
+  // 回到顶部按钮事件监听
+  if (backToTopBtn) {
+    backToTopBtn.addEventListener('click', scrollToTop);
+  }
+}
+
+// 事件监听器
+window.addEventListener('scroll', toggleBackToTopButton);
+
+// 页面加载完成后初始化
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
